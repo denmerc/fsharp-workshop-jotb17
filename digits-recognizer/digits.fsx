@@ -165,14 +165,18 @@ let myExample = { Label = 1; Pixels = [| 1 |] }
 
 let records = numbersMatrix |> Array.map(fun line -> { Label = line.[ 0 ]; Pixels = line.[ 1 .. ] })
 
-let RemoveHeaders (lines: string[]) = lines.[ 1 .. ]
+let RemoveHeaderLine (lines: string[]) = lines.[ 1 .. ]
+
+let CsvSplit (line: string) = line.Split(',')
+
+let CreateRecord (ints: int[]) =
+    { Label = ints.[ 0 ]; Pixels = ints.[ 1 .. ] }
 
 let ReadRecords (filename: string) =
     Path.Combine(localPath,filename)
     |> File.ReadAllLines
-    |> RemoveHeaders
-    |> Array.map (fun line -> line.Split(',') |> Array.map(int)) 
-    |> Array.map (fun line -> { Label = line.[ 0 ]; Pixels = line.[ 1 .. ] })
+    |> RemoveHeaderLine
+    |> Array.map (CsvSplit >> Array.map (int) >> CreateRecord)
 
 // 6. COMPUTING DISTANCES
  
