@@ -1,0 +1,8 @@
+framework >= net45
+source https://www.nuget.org/api/v2
+
+nuget FSharp.Data
+nuget MBrace.Core
+nuget MBrace.Flow
+nuget MBrace.Thespian
+nuget RProvider
