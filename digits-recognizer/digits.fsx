@@ -164,7 +164,16 @@ let myExample = { Label = 1; Pixels = [| 1 |] }
 // </F# QUICK-STARTER>  
 
 let records = numbersMatrix |> Array.map(fun line -> { Label = line.[ 0 ]; Pixels = line.[ 1 .. ] })
- 
+
+let RemoveHeaders (lines: string[]) = lines.[ 1 .. ]
+
+let ReadRecords (filename: string) =
+    Path.Combine(localPath,filename)
+    |> File.ReadAllLines
+    |> RemoveHeaders
+    |> Array.map (fun line -> line.Split(',') |> Array.map(int)) 
+    |> Array.map (fun line -> { Label = line.[ 0 ]; Pixels = line.[ 1 .. ] })
+
 // 6. COMPUTING DISTANCES
  
 // We need to compute the distance between images
@@ -242,16 +251,10 @@ let functionWithClosure (x: int) =
 // look like this - except that this one will
 // classify everything as a 0:
 let classify (unknown:int[]) =
-    // do something smart here
-    // like find the Example with
-    // the shortest distance to
-    // the unknown element...
-    // and use the training examples
-    // in a closure...
-    0 
- 
-// [ YOUR CODE GOES HERE! ]
- 
+    (records
+    |> Array.minBy (fun known -> distance unknown known.Pixels)
+    ).Label
+  
  
 // 8. EVALUATING THE MODEL AGAINST VALIDATION DATA
  
@@ -265,10 +268,17 @@ let classify (unknown:int[]) =
 // You could now check for each 500 example in that file
 // whether your classifier returns the correct answer,
 // and compute the % correctly predicted.
- 
- 
-// [ YOUR CODE GOES HERE! ]
 
+let validationRecords = ReadRecords ("validationsample.csv")
+
+let correctness =
+    validationRecords
+    |> Array.filter (fun record -> classify record.Pixels = record.Label)
+    |> fun correctRecords -> float correctRecords.Length / float validationRecords.Length
+
+    // |> fun correctRecords -> correctRecords.Length
+    // |> float
+    // |> fun correctLenth -> correctLenth / float validationRecords.Length
 
 // 9. SHIP IT!
 
