@@ -165,7 +165,6 @@ let myExample = { Label = 1; Pixels = [| 1 |] }
 
 let records = numbersMatrix |> Array.map(fun line -> { Label = line.[ 0 ]; Pixels = line.[ 1 .. ] })
  
- 
 // 6. COMPUTING DISTANCES
  
 // We need to compute the distance between images
@@ -181,22 +180,29 @@ let point2 = [| 3; 4; 5 |]
 // Array.map2 takes 2 arrays at a time
 // and maps pairs of elements, for instance:
 let map2Example = 
-    Array.map2 (fun p1 p2 -> p1 + p2) point1 point2
+    Array.map2 (+) point1 point2
 // This simply computes the sums for point1 and point2,
 // but we can easily turn this into a function now:
 let map2PointsExample (P1: int[]) (P2: int[]) =
-    Array.map2 (fun p1 p2 -> p1 + p2) P1 P2
+    Array.map2 (+) P1 P2
 // </F# QUICK-STARTER>  
 
 
+let squarediff a b = pown (a - b) 2
+
 // Having a function like
-let distance (p1: int[]) (p2: int[]) = 42
+let distance (p1: int[]) (p2: int[]) =
+    (p1, p2)
+    ||> Array.map2 squarediff  
+    |> Array.sum 
+    |> float 
+    |> sqrt
+    
 // would come in very handy right now,
 // except that in this case, 
 // 42 is likely not the right answer
  
-// [ YOUR CODE GOES HERE! ]
- 
+distance [| 0; 0; 0 |] [| 3; 3; 3 |]
  
 // 7. WRITING THE CLASSIFIER FUNCTION
  
