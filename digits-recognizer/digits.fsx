@@ -104,8 +104,7 @@ let containsI = strings |> Array.map (fun s -> s.Contains("i"))
 let csvToSplit = "1,2,3,4,5"
 let splitResult = csvToSplit.Split(',')
  
- 
-// [ YOUR CODE GOES HERE! ]
+let dataMatrix = dataLines |> Array.map (fun line -> line.Split(',')) 
  
  
 // 3. CLEANING UP HEADERS
@@ -120,11 +119,12 @@ let someNumbers = [| 0 .. 10 |] // create an array from 0 to 10
 let first = someNumbers.[0] 
 // You can also slice the array:
 let twoToFive = someNumbers.[ 1 .. 4 ] // grab a slice
-let upToThree = someNumbers.[ .. 2 ] 
+let upToThree = someNumbers.[ .. 2 ]
+
+someNumbers.[ 1 .. ] 
 // </F# QUICK-STARTER> 
 
-
-// [ YOUR CODE GOES HERE! ]
+let dataMatrixWithoutHeaders = dataMatrix.[ 1 .. ]
  
  
 // 4. CONVERTING FROM STRINGS TO INTS
@@ -141,8 +141,7 @@ let convertedInt = Convert.ToInt32("42")
 // or, even more simple:
 let intAsFunction = int "42" 
  
-// [ YOUR CODE GOES HERE! ]
- 
+let numbersMatrix = dataMatrixWithoutHeaders |> Array.map(fun line -> line |> Array.map(int)) 
  
 // 5. CONVERTING ARRAYS TO RECORDS
  
@@ -155,10 +154,16 @@ let intAsFunction = int "42"
 type Example = { Label:int; Pixels:int[] }
 // and instantiate one this way:
 let example = { Label = 1; Pixels = [| 1; 2; 3; |] }
+
+// Pann: records are distinguished by prop names
+// if you create another type with the same props, it overrides the old one
+type MyExample = { Label:int; PixelsCount:int }
+
+let myExample = { Label = 1; Pixels = [| 1 |] }
+
 // </F# QUICK-STARTER>  
 
- 
-// [ YOUR CODE GOES HERE! ]
+let records = numbersMatrix |> Array.map(fun line -> { Label = line.[ 0 ]; Pixels = line.[ 1 .. ] })
  
  
 // 6. COMPUTING DISTANCES
