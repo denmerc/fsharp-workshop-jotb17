@@ -159,7 +159,7 @@ let example = { Label = 1; Pixels = [| 1; 2; 3; |] }
 // if you create another type with the same props, it overrides the old one
 type MyExample = { Label:int; PixelsCount:int }
 
-let myExample = { Label = 1; Pixels = [| 1 |] }
+let myExample = { MyExample.Label = 1; PixelsCount = 1 }
 
 // </F# QUICK-STARTER>  
 
