@@ -178,6 +178,7 @@ let ReadRecords (filename: string) =
     |> RemoveHeaderLine
     |> Array.map (CsvSplit >> Array.map (int) >> CreateRecord)
 
+let knownRecords = ReadRecords "trainingsample.csv"
 // 6. COMPUTING DISTANCES
  
 // We need to compute the distance between images
@@ -254,12 +255,24 @@ let functionWithClosure (x: int) =
  // The classifier function should probably
 // look like this - except that this one will
 // classify everything as a 0:
-let classify (unknown:int[]) =
-    (records
-    |> Array.minBy (fun known -> distance unknown known.Pixels)
-    ).Label
   
- 
+let classify (classifier: int[] -> int[] -> float) (unknown:int[]) =
+    knownRecords
+    |> Array.minBy (fun known -> classifier unknown known.Pixels)
+    |> fun bestMatch -> bestMatch.Label
+
+let classifyByDistance =
+    classify distance
+
+let flatDistance (p1: int[]) (p2: int[]) =
+    (p1, p2)
+    ||> Array.map2 (fun a b -> abs (a - b))
+    |> Array.sum
+    |> float
+
+let classifyByFlatDistance =
+    classify flatDistance
+
 // 8. EVALUATING THE MODEL AGAINST VALIDATION DATA
  
 // Now that we have a classifier, we need to check
@@ -275,10 +288,16 @@ let classify (unknown:int[]) =
 
 let validationRecords = ReadRecords ("validationsample.csv")
 
-let correctness =
+let calculateCorrectness (classifier: int[] -> int[] -> float) =
     validationRecords
-    |> Array.filter (fun record -> classify record.Pixels = record.Label)
+    |> Array.filter (fun record -> (classify classifier) record.Pixels = record.Label)
     |> fun correctRecords -> float correctRecords.Length / float validationRecords.Length
+
+let correctnessDistance =
+    calculateCorrectness distance
+
+let correctnessFlatDistance =
+    calculateCorrectness flatDistance
 
     // |> fun correctRecords -> correctRecords.Length
     // |> float
